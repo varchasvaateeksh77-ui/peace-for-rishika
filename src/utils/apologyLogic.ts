@@ -1,8 +1,8 @@
 export interface ApologyConfig {
   recipientName: string;
+  nickname: string;
   senderName: string;
-  catalogNumber: string;
-  dateLabel: string;
+  subtitleTag: string;
   headline: string;
   subheadline: string;
   epigraphQuote: string;
@@ -18,13 +18,12 @@ export interface ApologyConfig {
 export interface PerspectiveItem {
   id: string;
   romanIndex: string;
-  timestampTag: string;
+  stepTag: string;
   title: string;
   subtitle: string;
   body: string;
   marginNote: string;
-  secretVerse: string;
-  motif: 'sunflower' | 'lily' | 'wax';
+  motif: 'sunflower' | 'lily' | 'watermelon';
 }
 
 export interface PeaceOffering {
@@ -33,148 +32,124 @@ export interface PeaceOffering {
   title: string;
   description: string;
   category: string;
-  iconKind: 'sunflower' | 'chocolate' | 'lily' | 'cooking' | 'flare';
+  iconKind: 'watermelon' | 'chocolate' | 'sunflower' | 'cooking' | 'lily';
 }
 
 export type ForgivenessVerdict = 'forgiven' | 'probation' | 'cooling';
-export type PeaceFlowerChoice = 'sunflowers' | 'lilies';
+export type PeaceFlowerChoice = 'sunflowers' | 'lilies' | 'watermelon-bouquet';
 
-export type InlineToken =
-  | { type: 'text'; value: string }
-  | { type: 'sunflower' }
-  | { type: 'heart' };
+export type ScreenStep = 1 | 2 | 3 | 4 | 5;
 
 export const KEEPSAKE_META = {
   herName: 'Rishika',
+  nickname: 'Mommy Biceps',
   chatUrl: 'https://ig.me/m/trytofindvxrchsva__',
   ntfyTopic: 'varchasva_rishika_truce_77',
 };
 
 export const DEFAULT_APOLOGY_CONFIG: ApologyConfig = {
   recipientName: 'Rishika',
-  senderName: 'Always in your corner, Varchasva',
-  catalogNumber: 'Folio No. IV · A Personal Peace Keepsake',
-  dateLabel: 'Kept exclusively for Rishika · Fine Press Edition',
-  headline: 'For Leaving in the Middle of Our Laugh.',
+  nickname: 'Mommy Biceps',
+  senderName: 'Yours, always — Varchasva',
+  subtitleTag: 'A Five-Page Peace Keepsake · For Rishika (a.k.a. Mommy Biceps)',
+  headline: 'I’m Sorry for Leaving in the Middle of Our Laugh.',
   subheadline:
-    'Because the joke itself was never the problem—and getting pulled away mid-sentence was purely circumstance, never a choice of the heart.',
+    'Because the joke itself was harmless and warm—and getting pulled away halfway through was never a choice I made.',
   epigraphQuote:
-    '“Between being pulled away by necessity and choosing to walk away lies an entire universe—and my choice is always to stay where you are laughing.”',
-  epigraphAuthor: 'Marginalia · On Unfinished Sentences',
-  greetingLine: 'Dearest Rishika,',
+    '“You already said yes to me once—and there is no version of me that ever chooses to walk away when you are laughing.”',
+  epigraphAuthor: 'Kept for Rishika',
+  greetingLine: 'Dear Rishika (my favorite person, Mommy Biceps),',
   jokeReflection: `I have been replaying that moment in my head ever since it happened. We were just messing around and joking the way we always do, and I know the joke itself didn't bother you at all. What ruined the moment—and what you have every right to be mad at me for—is that I vanished right in the middle of it. Disappearing halfway through a laugh makes it feel like I carelessly brushed you off, and I hate that I left you sitting there with an unfinished moment.`,
-  philosophicalTruth: `In philosophy, there is a world of difference between necessity and choice—between being pulled away by sudden circumstance and choosing to leave. I need you to know, without a single shadow of doubt, that leaving in the middle of talking to you is never a choice I make. Whenever the choice belongs to me, there is nowhere else I would rather be than right there in the middle of your laugh.`,
-  listeningPledge: `I also understand why you didn't want to hear it when I kept trying to explain myself right after. When someone disappears mid-joke, rapid-fire explanations sound like excuses trying to win an argument rather than care for how frustrating it felt on your side. So I stopped trying to talk over your anger and made you this quiet page instead—so my apology could wait patiently for you, rather than demanding you listen on my schedule.`,
-  closingPromise: `You deserve conversations that never break off without warning, a proper peace offering of milk chocolate, and a home-cooked meal where you hold full critic immunity to rate my cooking as harshly as my timing deserved.`,
+  philosophicalTruth: `There is a huge difference between being pulled away by life and choosing to leave. I need you to know, from the bottom of my heart, that leaving in the middle of talking to you is never a choice. You already said yes to me when I asked you in our last project, and whenever the choice is mine, there is nowhere in the world I would rather be than right there listening to you laugh.`,
+  listeningPledge: `I also get why you didn't want to hear it when I kept trying to explain myself right after. When someone vanishes mid-joke, fast explanations just sound like excuses trying to win an argument instead of caring about how annoying it felt on your side. So I stopped trying to talk over your frustration and made this little book of pages for you instead—with sunflowers, white lilies, milk chocolate, and fresh watermelon waiting at the end.`,
+  closingPromise: `You deserve conversations that never cut off without warning, a bowl of cold sweet watermelon, your favorite milk chocolate, and a home-cooked meal where Mommy Biceps gets full rights to roast my cooking.`,
   postscript:
-    'P.S. Take all the time you need to be annoyed with me first—this page, along with golden sunflowers and quiet white lilies, will be right here until you are ready to finish that laugh.',
+    'P.S. Take your time flipping through these pages—I’ll be right here waiting until you are ready to laugh with me again.',
 };
 
 export const PERSPECTIVE_ITEMS: PerspectiveItem[] = [
   {
     id: 'what-silence-said',
     romanIndex: 'I',
-    timestampTag: 'Beat 01 · The Shared Laugh',
-    title: 'The Joke Was Harmless; The Vanishing Was Not',
-    subtitle: 'Why Your Frustration Makes Complete Sense',
-    body: 'It wasn’t the teasing or the joke that bothered you at all—we were right in the middle of a warm moment. What felt abrupt and unfair was the sudden silence right in the middle of it, turning a shared laugh into an unfinished room.',
-    marginNote: '“An unfinished laugh echoes louder than an ordinary silence.”',
-    secretVerse:
-      'Note in the margin: I never want you to feel like a moment with you is something I can pause without care.',
+    stepTag: 'Truth 01 · The Interrupted Laugh',
+    title: 'The Joke Was Harmless; Vanishing Was Not',
+    subtitle: 'Why you have every right to be mad at me',
+    body: 'It wasn’t the teasing or the joke that bothered you at all—we were having a good moment. What felt unfair was the sudden silence right in the middle of it, leaving a shared laugh hanging in mid-air.',
+    marginNote: '“A half-finished laugh feels louder than an empty room.”',
     motif: 'sunflower',
   },
   {
     id: 'circumstance-vs-choice',
     romanIndex: 'II',
-    timestampTag: 'Beat 02 · The Sudden Interruption',
-    title: 'Necessity vs. Choice',
-    subtitle: 'Why Leaving Mid-Moment Was Never Voluntary',
-    body: 'Being pulled away in the middle of our joke was purely external circumstance, never a decision of the heart. Given a free choice between anything else in the world and finishing a conversation with you, I am choosing you every single time.',
-    marginNote: '“Circumstance interrupted the sentence; choice brings me back to finish it.”',
-    secretVerse:
-      'Note in the margin: Even when life pulls me away for a moment, my attention is still turned toward you like a sunflower toward the sun.',
+    stepTag: 'Truth 02 · Never a Choice',
+    title: 'Pulled Away by Life, Never by Choice',
+    subtitle: 'If it were up to me, I would never leave mid-sentence',
+    body: 'Having to step away in that exact second was pure circumstance, never a choice I made. Between anything else in the world and staying in a conversation with you, my heart picks you every single time.',
+    marginNote: '“Circumstance interrupted the moment; choice brings me right back to you.”',
     motif: 'lily',
   },
   {
     id: 'why-explanations-failed',
     romanIndex: 'III',
-    timestampTag: 'Beat 03 · After the Silence',
-    title: 'Why Rushed Explanations Missed the Point',
-    subtitle: 'Patience Over Defensiveness',
-    body: 'When I kept trying to explain why I had to leave while you were still upset, I was asking you to process my reason before acknowledging how annoying it felt on your side. You didn’t need a courtroom defense—you deserved a thoughtful pause.',
-    marginNote: '“Explanations try to rush the past; patience restores the peace.”',
-    secretVerse:
-      'Note in the margin: No more rapid-fire excuses—just quiet accountability until your smile comes back.',
-    motif: 'wax',
+    stepTag: 'Truth 03 · No More Rushed Excuses',
+    title: 'Why I Stopped Trying to Over-Explain',
+    subtitle: 'You deserved patience, not a debate',
+    body: 'When I kept trying to explain why I left while you were rightfully annoyed, I was asking you to hear my side before respecting how frustrating it felt on yours. No more rushed texts—just patience and peace offerings.',
+    marginNote: '“Excuses try to rush the past; watermelon and patience fix the present.”',
+    motif: 'watermelon',
   },
 ];
 
 export const DEFAULT_PEACE_OFFERINGS: PeaceOffering[] = [
   {
-    id: 'finish-conversation',
+    id: 'fresh-watermelon',
     indexLabel: '01',
-    title: 'The Unfinished Laugh Replay',
+    title: 'Fresh, Sweet Chilled Watermelon',
     description:
-      'We pick up our interrupted joke from the exact syllable where it broke off—with my phone on Do Not Disturb and zero outside interruptions allowed.',
-    category: 'Presence · Uninterrupted Time',
-    iconKind: 'sunflower',
-  },
-  {
-    id: 'three-second-flare',
-    indexLabel: '02',
-    title: 'The 3-Second Flare Protocol',
-    description:
-      'If an unavoidable real-life emergency ever pulls me away mid-conversation again, I send an instant shorthand flare first so you are never left wondering.',
-    category: 'Communication · Zero Ghosting',
-    iconKind: 'flare',
+      'Cut up nicely and chilled just the way you like it—because no proper peace treaty with you is complete without watermelon.',
+    category: 'Top Priority · Her Favorite Fruit',
+    iconKind: 'watermelon',
   },
   {
     id: 'milk-chocolate-inventory',
-    indexLabel: '03',
-    title: 'Proper Milk Chocolate Peace Offering',
+    indexLabel: '02',
+    title: 'Full Milk Chocolate Restock',
     description:
-      'A dedicated restock of your favourite milk chocolate delivered in person—because a sincere apology is always better when accompanied by something sweet.',
-    category: 'Sweet Reparation · Milk Cacao',
+      'Your favorite milk chocolate delivered with zero excuses—because sweetening the mood after an interrupted joke is mandatory.',
+    category: 'Sweet Truce · Milk Cacao',
     iconKind: 'chocolate',
   },
   {
-    id: 'cook-without-offense',
-    indexLabel: '04',
-    title: 'Home-Cooked Apology Meal (Full Critic Immunity)',
+    id: 'sunflowers-and-lilies',
+    indexLabel: '03',
+    title: 'Golden Sunflowers & White Lilies',
     description:
-      'I cook for you properly to make up for it, and I officially waive my right to act offended even if you score the dish a 2/10 just to humble me.',
-    category: 'Culinary Reparation · Chef on Probation',
+      'Bright sunflowers and quiet white lilies for my favorite girl—to make up for the silence I left behind.',
+    category: 'Botanical Gift · Kept for You',
+    iconKind: 'sunflower',
+  },
+  {
+    id: 'cook-for-mommy-biceps',
+    indexLabel: '04',
+    title: 'Home-Cooked Meal for Mommy Biceps',
+    description:
+      'I cook a proper meal for you to make it up to you—and I officially waive my right to act offended even if you rate it a 2/10 just to humble me.',
+    category: 'Chef Duty · Zero Offended Rights',
     iconKind: 'cooking',
   },
   {
-    id: 'listen-without-defense',
+    id: 'finish-conversation',
     indexLabel: '05',
-    title: 'Unfiltered Roast & Venting Immunity',
+    title: 'Finishing Our Interrupted Joke Properly',
     description:
-      'You get five uninterrupted minutes to tell me how annoying my mid-joke exit was while I listen, nod, and offer zero defensive "buts" or excuses.',
-    category: 'Accountability · Zero Excuses',
+      'We pick up our laugh from the exact second it got cut off—plus an instant 3-second heads-up text if life ever interrupts me again.',
+    category: 'Promise · No More Vanishing',
     iconKind: 'lily',
   },
 ];
 
-export function tokenizeInlineIcons(text: string): InlineToken[] {
-  const parts = text.split(/(🌻|🤍)/g);
-  const tokens: InlineToken[] = [];
-  for (const part of parts) {
-    if (!part) continue;
-    if (part === '🌻') {
-      tokens.push({ type: 'sunflower' });
-    } else if (part === '🤍') {
-      tokens.push({ type: 'heart' });
-    } else {
-      tokens.push({ type: 'text', value: part });
-    }
-  }
-  return tokens;
-}
-
 /**
- * Deterministic dodging offset for the playful "Stay Mad a Little Longer" button,
+ * Deterministic dodging offset for the playful "Stay Mad" button,
  * shifting gently and yielding on the 5th attempt.
  */
 export function computeDodgeOffset(attemptCount: number): {
@@ -211,15 +186,16 @@ export function validateCustomOffering(
 ): { valid: boolean; error: string | null } {
   const trimmed = title.trim();
   if (!trimmed) {
-    return { valid: false, error: 'Please enter a peace term before adding it to the ledger.' };
+    return { valid: false, error: 'Please write a short demand first before adding it.' };
   }
   if (trimmed.length < 3) {
-    return { valid: false, error: 'Peace term must be at least 3 characters long.' };
+    return { valid: false, error: 'Please write at least 3 characters.' };
   }
   return { valid: true, error: null };
 }
 
 export function calculatePeaceProgress(params: {
+  currentStep?: ScreenStep;
   selectedOfferings: string[];
   verdict: ForgivenessVerdict | null;
   truceSealed: boolean;
@@ -229,30 +205,38 @@ export function calculatePeaceProgress(params: {
   offeringCount: number;
 } {
   const offeringCount = params.selectedOfferings.length;
+  const step = params.currentStep ?? 1;
 
-  let score = 40;
-  score += Math.min(offeringCount, 4) * 10;
-  if (params.verdict) {
-    score += 15;
-  }
   if (params.truceSealed) {
-    score = 100;
+    return {
+      percentage: 100,
+      stageLabel: 'Sent to Varchasva ✓',
+      offeringCount,
+    };
   }
 
-  const percentage = Math.min(100, score);
+  const stepScores: Record<ScreenStep, number> = {
+    1: 20,
+    2: 40,
+    3: 60,
+    4: 80,
+    5: 90,
+  };
 
-  let stageLabel = 'Reading the Epistle';
-  if (params.truceSealed) {
-    stageLabel = 'Dispatched to Varchasva';
-  } else if (params.verdict) {
-    stageLabel = 'Ready to Seal & Send';
-  } else if (offeringCount > 0) {
-    stageLabel = 'Selecting Reparations';
-  }
+  const base = stepScores[step] || 20;
+  const percentage = Math.min(95, base + (params.verdict ? 5 : 0));
+
+  const stageLabels: Record<ScreenStep, string> = {
+    1: 'Page 1 of 5 · Opening Envelope',
+    2: 'Page 2 of 5 · Reading the Letter',
+    3: 'Page 3 of 5 · Three Honest Truths',
+    4: 'Page 4 of 5 · Picking Peace Offerings',
+    5: 'Page 5 of 5 · Final Verdict',
+  };
 
   return {
     percentage,
-    stageLabel,
+    stageLabel: stageLabels[step],
     offeringCount,
   };
 }
@@ -269,25 +253,27 @@ export function buildTruceReplyMessage(params: {
     forgiven:
       'I read your letter. Peace is officially restored—and you are forgiven for vanishing in the middle of our laugh.',
     probation:
-      'I read your letter. Truce accepted on probation—no disappearing mid-joke again, and make sure the peace offerings are delivered.',
+      'I read your letter. Truce accepted on probation—bring the watermelon and milk chocolate first, and no disappearing mid-joke again.',
     cooling:
-      'I read your letter and I hear that leaving wasn’t a choice. Give me a little quiet space first, and we’ll talk soon.',
+      'I read your letter and I know leaving wasn’t a choice. Give me a little quiet time first, and we’ll talk soon.',
   };
 
   const flowerLabel =
     params.chosenFlower === 'lilies'
-      ? 'White Lilies'
-      : 'Golden Sunflowers';
+      ? 'White Lilies 🤍'
+      : params.chosenFlower === 'watermelon-bouquet'
+      ? 'Sunflowers, Lilies & Extra Watermelon 🍉🌻'
+      : 'Golden Sunflowers 🌻';
 
   const lines: string[] = [
-    `From ${params.recipientName} — Peace Keepsake Dispatch:`,
+    `From ${params.recipientName} (Mommy Biceps) — Peace Verdict:`,
     verdictTextMap[params.verdict],
-    `Botanical Emblem Chosen: ${flowerLabel}`,
+    `Peace Combo Picked: ${flowerLabel}`,
   ];
 
   if (params.selectedOfferingTitles.length > 0) {
     lines.push('');
-    lines.push('Reparation Clauses Claimed:');
+    lines.push('Peace Basket Items Claimed:');
     for (const item of params.selectedOfferingTitles) {
       lines.push(`• ${item}`);
     }
@@ -295,21 +281,17 @@ export function buildTruceReplyMessage(params: {
 
   if (params.personalNote.trim().length > 0) {
     lines.push('');
-    lines.push(`Marginal Note: “${params.personalNote.trim()}”`);
+    lines.push(`Her Note: “${params.personalNote.trim()}”`);
   }
 
   if (params.shareUrl) {
     lines.push('');
-    lines.push(`Sealed Keepsake Link: ${params.shareUrl}`);
+    lines.push(`Sealed Link: ${params.shareUrl}`);
   }
 
   return lines.join('\n');
 }
 
-/**
- * Encodes her sealed choices into URL query parameters so that if she shares the link
- * or opens it, Varchasva sees her exact selections immediately.
- */
 export function buildShareableVerdictUrl(
   baseUrl: string,
   params: {

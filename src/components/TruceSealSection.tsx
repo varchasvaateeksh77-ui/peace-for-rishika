@@ -11,9 +11,10 @@ import {
   computeDodgeOffset,
 } from '../utils/apologyLogic';
 import {
+  BotanicalBouquetCrestSvg,
   LilySvg,
-  PressedBotanicalPlateSvg,
   SunflowerSvg,
+  WatermelonSvg,
   WaxSealSvg,
 } from './BotanicalArt';
 import { soundEngine } from '../utils/soundEngine';
@@ -32,6 +33,7 @@ interface TruceSealSectionProps {
   onChangePersonalNote: (note: string) => void;
   onSealTruce: (overrideVerdict?: ForgivenessVerdict) => void;
   onResetTruce: () => void;
+  onPrev: () => void;
 }
 
 const VERDICT_OPTIONS: {
@@ -43,13 +45,13 @@ const VERDICT_OPTIONS: {
     value: 'forgiven',
     label: 'Peace Restored — You Are Forgiven',
     sublabel:
-      'The olive branch is accepted; we pick up our unfinished laugh right where we left off.',
+      'Apology accepted; bring the watermelon and milk chocolate, and let’s finish that laugh.',
   },
   {
     value: 'probation',
-    label: 'Truce Granted (On Cute Probation)',
+    label: 'Forgiven (But On Cute Probation)',
     sublabel:
-      'Apology accepted, provided every reparation clause claimed above is honoured in full.',
+      'I forgive you, provided every item I put in the Peace Basket gets delivered.',
   },
   {
     value: 'cooling',
@@ -73,6 +75,7 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
   onChangePersonalNote,
   onSealTruce,
   onResetTruce,
+  onPrev,
 }) => {
   const [copied, setCopied] = useState(false);
   const [verdictError, setVerdictError] = useState<string | null>(null);
@@ -96,7 +99,7 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
     if (!verdict) {
       soundEngine.playCatBoop('sassy');
       setVerdictError(
-        'Please select one of the three verdicts above before stamping the wax seal.'
+        'Please pick one of the three verdicts above before stamping the wax seal.'
       );
       return;
     }
@@ -141,30 +144,38 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
 
   return (
     <section
-      id="seal-truce"
-      className="py-14 lg:py-20"
       aria-labelledby="seal-truce-heading"
+      className="py-6 sm:py-10 flex flex-col justify-between"
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-        {/* Left Column: Editorial Olive Branch Card, Dodging "Stay Mad" Interaction & Closing Promise */}
-        <div className="paper-sheet double-rule-frame lg:col-span-5 flex flex-col gap-6 p-7 sm:p-9">
+      <div className="text-center max-w-2xl mx-auto mb-8">
+        <p className="font-mono-meta text-[11px] uppercase tracking-[0.2em] text-[#445946] mb-2">
+          Page 5 of 5 · The Final Verdict
+        </p>
+        <h1
+          id="seal-truce-heading"
+          className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#1E1916] tracking-tight mb-2"
+          style={{ textWrap: 'balance' }}
+        >
+          Ready to Restore Peace, Mommy Biceps?
+        </h1>
+        <p className="font-serif-body italic text-lg sm:text-xl text-[#5C5249]">
+          Pick your peace combo and stamp the wax seal—your exact choices will be
+          sent straight to me automatically.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-8">
+        {/* Left 5 Columns: Playful Olive Branch Card & Dodging "Stay Mad" Button */}
+        <div className="paper-sheet double-rule-frame lg:col-span-5 flex flex-col gap-6 p-7 sm:p-8">
           <div className="flex flex-col items-center text-center">
-            <div className="w-full flex items-center justify-between font-mono-meta text-[11px] uppercase tracking-[0.16em] text-[#8A7E72] pb-3 mb-5 border-b border-[#DED5C5]">
-              <span>Section IV · The Olive Branch</span>
-              <span>Folio Truce</span>
-            </div>
+            <BotanicalBouquetCrestSvg className="w-full max-w-[270px] h-auto mb-3" />
 
-            <PressedBotanicalPlateSvg
-              className="w-48 h-auto mb-4"
-              activeFlower={chosenFlower}
-            />
-
-            <h3 className="font-display text-2xl sm:text-3xl font-semibold text-[#1E1916] text-balance">
-              Can we restore peace and finish that laugh properly?
-            </h3>
+            <h2 className="font-display text-2xl sm:text-3xl font-semibold text-[#1E1916] text-balance">
+              Can we finish that laugh where we left off?
+            </h2>
             <p className="font-serif-body italic text-base text-[#5C5249] mt-2">
-              Leaving in the middle of our moment was never a choice—coming back
-              with patience and milk chocolate is.
+              Leaving halfway through our joke was never a choice—coming back with
+              watermelon, milk chocolate, and flowers is.
             </p>
 
             {/* Playful Dodging "Stay Mad" Button & Primary "Forgive" Action */}
@@ -190,7 +201,7 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
                   }}
                   className="min-h-[42px] px-4 py-2 bg-[#F6F2EA] text-[#5C5249] font-sans-ui text-xs uppercase tracking-[0.1em] font-medium border border-[#C5B9A5] cursor-pointer whitespace-nowrap transition-all duration-150"
                 >
-                  Stay Mad a Little Longer
+                  Stay Mad
                 </button>
               )}
             </div>
@@ -201,22 +212,10 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
                 className="mt-2 font-serif-body italic text-sm text-[#9B3F33]"
               >
                 {dodgeState.hidden
-                  ? 'The “Stay Mad” option has politely retired itself from the page.'
-                  : `Attempt #${stayMadCount} to stay mad gently overruled by the typesetter.`}
+                  ? 'Even Mommy Biceps can’t click “Stay Mad” anymore—it ran away!'
+                  : `Attempt #${stayMadCount}: The “Stay Mad” button refuses to cooperate!`}
               </p>
             )}
-          </div>
-
-          {/* Three-Part Post-Truce Covenant */}
-          <div className="p-5 paper-inset text-left space-y-2.5">
-            <div className="font-mono-meta text-[11px] uppercase tracking-[0.16em] text-[#445946]">
-              The Post-Truce Covenant
-            </div>
-            <ul className="space-y-1.5 font-serif-body text-[16px] text-[#1E1916]">
-              <li>01 · Resume our interrupted joke from the exact syllable it broke off.</li>
-              <li>02 · Deliver your chosen peace flowers & milk chocolate restock.</li>
-              <li>03 · Send an instant 3-second flare if life ever interrupts mid-chat again.</li>
-            </ul>
           </div>
 
           <div className="pt-5 border-t border-[#DED5C5] text-left">
@@ -232,34 +231,18 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
           </div>
         </div>
 
-        {/* Right Column: Botanical Emblem Selector, Sovereign Verdict & Venetian Wax Seal */}
-        <div className="paper-sheet lg:col-span-7 flex flex-col justify-between p-7 sm:p-10">
+        {/* Right 7 Columns: Flower/Watermelon Selector, Verdict Radio & Seal */}
+        <div className="paper-sheet lg:col-span-7 flex flex-col justify-between p-7 sm:p-9">
           <div>
-            <p className="font-mono-meta text-[11px] uppercase tracking-[0.2em] text-[#445946] mb-2">
-              Official Keepsake Dispatch · Prepared for {config.recipientName}
-            </p>
-            <h2
-              id="seal-truce-heading"
-              className="font-display text-3xl sm:text-4xl font-semibold text-[#1E1916] tracking-tight mb-2"
-              style={{ textWrap: 'balance' }}
-            >
-              {config.recipientName}’s Sovereign Verdict
-            </h2>
-            <p className="font-serif-body text-[18px] text-[#5C5249] mb-6">
-              Pick your preferred peace flower and verdict below. The moment you
-              stamp the wax seal, your exact choices are dispatched straight to
-              Varchasva.
-            </p>
-
-            {/* Step 1: Botanical Emblem Preference (Sunflowers vs. White Lilies) */}
+            {/* Step 1: Peace Combo Choice */}
             <div className="mb-6 p-5 paper-inset">
               <p className="font-display text-xl font-semibold text-[#1E1916] mb-3">
-                1. Preferred Peace Flower: Golden Sunflowers or White Lilies?
+                1. Pick Your Peace Combo:
               </p>
               <div
-                className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+                className="flex flex-wrap gap-2.5"
                 role="group"
-                aria-label="Choose your peace bouquet flower"
+                aria-label="Choose your peace combo"
               >
                 <button
                   type="button"
@@ -268,14 +251,14 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
                     onChangeChosenFlower('sunflowers');
                   }}
                   aria-pressed={chosenFlower === 'sunflowers'}
-                  className={`min-h-[46px] px-4 py-2.5 border font-sans-ui text-xs uppercase tracking-[0.12em] font-medium flex items-center justify-center gap-2.5 cursor-pointer transition-colors whitespace-nowrap ${
+                  className={`flex-1 min-h-[44px] px-3 py-2 border font-sans-ui text-xs uppercase tracking-[0.08em] font-medium flex items-center justify-center gap-2 cursor-pointer transition-colors whitespace-nowrap ${
                     chosenFlower === 'sunflowers'
                       ? 'bg-[#1E1916] border-[#1E1916] text-[#FCF9F4]'
                       : 'bg-[#FCF9F4] border-[#C5B9A5] text-[#5C5249] hover:border-[#1E1916]'
                   }`}
                 >
                   <SunflowerSvg className="w-5 h-5 shrink-0" />
-                  <span>Golden Sunflowers</span>
+                  <span>Sunflowers</span>
                 </button>
 
                 <button
@@ -285,7 +268,7 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
                     onChangeChosenFlower('lilies');
                   }}
                   aria-pressed={chosenFlower === 'lilies'}
-                  className={`min-h-[46px] px-4 py-2.5 border font-sans-ui text-xs uppercase tracking-[0.12em] font-medium flex items-center justify-center gap-2.5 cursor-pointer transition-colors whitespace-nowrap ${
+                  className={`flex-1 min-h-[44px] px-3 py-2 border font-sans-ui text-xs uppercase tracking-[0.08em] font-medium flex items-center justify-center gap-2 cursor-pointer transition-colors whitespace-nowrap ${
                     chosenFlower === 'lilies'
                       ? 'bg-[#1E1916] border-[#1E1916] text-[#FCF9F4]'
                       : 'bg-[#FCF9F4] border-[#C5B9A5] text-[#5C5249] hover:border-[#1E1916]'
@@ -294,10 +277,27 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
                   <LilySvg className="w-5 h-5 shrink-0" />
                   <span>White Lilies</span>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundEngine.playTap();
+                    onChangeChosenFlower('watermelon-bouquet');
+                  }}
+                  aria-pressed={chosenFlower === 'watermelon-bouquet'}
+                  className={`flex-1 min-h-[44px] px-3 py-2 border font-sans-ui text-xs uppercase tracking-[0.08em] font-medium flex items-center justify-center gap-2 cursor-pointer transition-colors whitespace-nowrap ${
+                    chosenFlower === 'watermelon-bouquet'
+                      ? 'bg-[#1E1916] border-[#1E1916] text-[#FCF9F4]'
+                      : 'bg-[#FCF9F4] border-[#C5B9A5] text-[#5C5249] hover:border-[#1E1916]'
+                  }`}
+                >
+                  <WatermelonSvg className="w-5 h-5 shrink-0" />
+                  <span>All + Watermelon</span>
+                </button>
               </div>
             </div>
 
-            {/* Step 2: 3 Verdict Radio Options */}
+            {/* Step 2: 3 Verdict Options */}
             <div
               role="radiogroup"
               aria-label="Forgiveness verdict"
@@ -316,7 +316,7 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
                       onSelectVerdict(option.value);
                       if (verdictError) setVerdictError(null);
                     }}
-                    className={`w-full text-left p-5 border transition-all cursor-pointer ${
+                    className={`w-full text-left p-4 sm:p-5 border transition-all cursor-pointer ${
                       active
                         ? 'bg-[#F5E6E3]/55 border-[#9B3F33]'
                         : 'bg-[#FCF9F4] border-[#DED5C5] hover:border-[#C5B9A5]'
@@ -342,7 +342,7 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
               })}
             </div>
 
-            {/* Step 3: Optional Marginal Note from Her */}
+            {/* Step 3: Optional Note */}
             <div className="mb-6">
               <label
                 htmlFor="recipient-marginal-note"
@@ -355,7 +355,7 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
                 rows={2}
                 value={personalNote}
                 onChange={(e) => onChangePersonalNote(e.target.value)}
-                placeholder="Write a short reply, roast his timing a little, or leave it blank..."
+                placeholder="Write a short reply, roast my timing, or demand extra watermelon..."
                 className="w-full px-4 py-3 bg-[#F6F2EA] border border-[#C5B9A5] font-serif-body text-lg text-[#1E1916] placeholder:text-[#8A7E72] focus:outline-none focus:border-[#9B3F33]"
               />
             </div>
@@ -375,7 +375,7 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
             {!truceSealed ? (
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="font-mono-meta text-xs text-[#5C5249] tabular-nums">
-                  <span>{selectedOfferings.length} Peace Offerings Selected</span>
+                  <span>{selectedOfferings.length} Basket Items Attached</span>
                 </div>
                 <button
                   type="button"
@@ -398,14 +398,14 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
                     <div>
                       <p className="font-mono-meta text-[11px] uppercase tracking-[0.16em] text-[#445946]">
                         {dispatchStatus === 'sending'
-                          ? 'Dispatching Your Choices to Varchasva...'
-                          : '✓ Dispatched to Varchasva & Copied to Clipboard'}
+                          ? 'Sending Your Choices to Varchasva...'
+                          : '✓ Sent to Varchasva & Copied to Clipboard'}
                       </p>
                       <h3 className="font-display text-2xl font-semibold text-[#1E1916]">
-                        Peace Keepsake — Sealed by {config.recipientName}
+                        Sealed by {config.recipientName} (Mommy Biceps)
                       </h3>
                       <p className="font-hand text-xl text-[#5C5249]">
-                        Your exact choices have been recorded & sent
+                        Your exact peace basket & verdict have been recorded
                       </p>
                     </div>
                   </div>
@@ -456,6 +456,21 @@ export const TruceSealSection: React.FC<TruceSealSectionProps> = ({
             )}
           </div>
         </div>
+      </div>
+
+      {/* Screen Navigation Footer */}
+      <div className="pt-4 border-t border-[#DED5C5] flex items-center justify-between gap-4">
+        <button
+          type="button"
+          onClick={onPrev}
+          className="min-h-[44px] px-5 py-2.5 bg-[#FCF9F4] border border-[#C5B9A5] font-sans-ui text-xs uppercase tracking-[0.12em] font-medium text-[#1E1916] hover:border-[#1E1916] transition-colors cursor-pointer"
+        >
+          ← Back to Peace Basket (4/5)
+        </button>
+
+        <span className="font-mono-meta text-[11px] uppercase tracking-[0.15em] text-[#8A7E72]">
+          Final Page · Kept for {config.recipientName}
+        </span>
       </div>
     </section>
   );

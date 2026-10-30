@@ -8,16 +8,17 @@ import {
   PeaceFlowerChoice,
   PeaceOffering,
   ForgivenessVerdict,
+  ScreenStep,
   buildShareableVerdictUrl,
   buildTruceReplyMessage,
   calculatePeaceProgress,
-  tokenizeInlineIcons,
 } from './utils/apologyLogic';
 import { soundEngine } from './utils/soundEngine';
 import {
-  InlineSunflowerIcon,
-  InlineWhiteHeartIcon,
-  PressedBotanicalPlateSvg,
+  BotanicalBouquetCrestSvg,
+  LilySvg,
+  SunflowerSvg,
+  WatermelonSvg,
   WaxSealSvg,
 } from './components/BotanicalArt';
 import { TopBar } from './components/TopBar';
@@ -25,7 +26,7 @@ import { PerspectiveLedger } from './components/PerspectiveLedger';
 import { PeaceOfferingsSection } from './components/PeaceOfferingsSection';
 import { TruceSealSection } from './components/TruceSealSection';
 
-const STORAGE_KEY_STATE = 'rishika_finepress_apology_state_v4';
+const STORAGE_KEY_STATE = 'rishika_multiscreen_peace_v5';
 
 interface DispatchLogEntry {
   id: string;
@@ -36,20 +37,21 @@ interface DispatchLogEntry {
 export function App() {
   const config = DEFAULT_APOLOGY_CONFIG;
 
+  const [currentStep, setCurrentStep] = useState<ScreenStep>(1);
   const [offerings, setOfferings] = useState<PeaceOffering[]>(
     DEFAULT_PEACE_OFFERINGS
   );
   const [selectedOfferingIds, setSelectedOfferingIds] = useState<string[]>([
-    'finish-conversation',
+    'fresh-watermelon',
     'milk-chocolate-inventory',
+    'sunflowers-and-lilies',
   ]);
   const [verdict, setVerdict] = useState<ForgivenessVerdict | null>(null);
   const [chosenFlower, setChosenFlower] =
-    useState<PeaceFlowerChoice>('sunflowers');
+    useState<PeaceFlowerChoice>('watermelon-bouquet');
   const [truceSealed, setTruceSealed] = useState(false);
   const [personalNote, setPersonalNote] = useState('');
   const [isMuted, setIsMuted] = useState<boolean>(() => soundEngine.isMuted());
-  const [sealBroken, setSealBroken] = useState(false);
   const [dispatchStatus, setDispatchStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
 
   // Varchasva's built-in live inbox modal to view whatever Rishika picked from anywhere
@@ -75,7 +77,11 @@ export function App() {
         if (v === 'forgiven' || v === 'probation' || v === 'cooling') {
           setVerdict(v);
         }
-        if (f === 'sunflowers' || f === 'lilies') {
+        if (
+          f === 'sunflowers' ||
+          f === 'lilies' ||
+          f === 'watermelon-bouquet'
+        ) {
           setChosenFlower(f);
         }
         let customList: PeaceOffering[] = [];
@@ -87,9 +93,9 @@ export function App() {
               id: `custom-url-${idx}`,
               indexLabel: String(DEFAULT_PEACE_OFFERINGS.length + idx + 1).padStart(2, '0'),
               title,
-              description: `Inscribed directly by ${config.recipientName} as a binding condition of peace.`,
-              category: 'Bespoke Clause · Immediate',
-              iconKind: 'sunflower',
+              description: `Added directly by ${config.recipientName} as a binding condition of peace.`,
+              category: 'Custom Demand · Immediate',
+              iconKind: 'watermelon',
             }));
           setOfferings([...DEFAULT_PEACE_OFFERINGS, ...customList]);
         }
@@ -105,6 +111,7 @@ export function App() {
         }
         setTruceSealed(true);
         setDispatchStatus('sent');
+        setCurrentStep(5);
         return;
       }
 
@@ -125,7 +132,8 @@ export function App() {
         }
         if (
           parsed.chosenFlower === 'sunflowers' ||
-          parsed.chosenFlower === 'lilies'
+          parsed.chosenFlower === 'lilies' ||
+          parsed.chosenFlower === 'watermelon-bouquet'
         ) {
           setChosenFlower(parsed.chosenFlower);
         }
@@ -170,6 +178,12 @@ export function App() {
     truceSealed,
     personalNote,
   ]);
+
+  const goToStep = (nextStep: ScreenStep) => {
+    soundEngine.playTap();
+    setCurrentStep(nextStep);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const fetchDispatchInbox = async () => {
     setInboxLoading(true);
@@ -225,9 +239,9 @@ export function App() {
       id: `custom-${Date.now()}`,
       indexLabel: nextIndex,
       title,
-      description: `Inscribed directly by ${config.recipientName} as a binding condition of peace.`,
-      category: 'Bespoke Clause · Immediate',
-      iconKind: 'sunflower',
+      description: `Added directly by ${config.recipientName} as a binding condition of peace.`,
+      category: 'Custom Demand · Immediate',
+      iconKind: 'watermelon',
     };
     setOfferings((prev) => [...prev, newOffering]);
     setSelectedOfferingIds((prev) => [...prev, newOffering.id]);
@@ -253,7 +267,6 @@ export function App() {
       }
     );
 
-    // Update browser URL so if she copies the URL bar, it carries her exact selections
     try {
       window.history.replaceState({}, '', shareUrl);
     } catch {
@@ -269,14 +282,12 @@ export function App() {
       shareUrl,
     });
 
-    // Automatically copy to clipboard so she can paste it in 1 tap if she opens Instagram
     try {
       await navigator.clipboard.writeText(messagePayload);
     } catch {
       // ignore clipboard permission errors
     }
 
-    // Send live push/log dispatch to ntfy.sh so Varchasva receives it automatically
     try {
       await fetch(`https://ntfy.sh/${KEEPSAKE_META.ntfyTopic}`, {
         method: 'POST',
@@ -306,19 +317,8 @@ export function App() {
     setIsMuted(soundEngine.toggleMute());
   };
 
-  const renderPoeticText = (text: string) => {
-    return tokenizeInlineIcons(text).map((tok, i) => {
-      if (tok.type === 'sunflower') {
-        return <InlineSunflowerIcon key={i} />;
-      }
-      if (tok.type === 'heart') {
-        return <InlineWhiteHeartIcon key={i} />;
-      }
-      return <React.Fragment key={i}>{tok.value}</React.Fragment>;
-    });
-  };
-
   const progress = calculatePeaceProgress({
+    currentStep,
     selectedOfferings: selectedOfferingIds,
     verdict,
     truceSealed,
@@ -333,235 +333,231 @@ export function App() {
     .map((o) => o.title);
 
   return (
-    <div id="epistle-top" className="relative min-h-screen flex flex-col">
-      {/* Fine Press Editorial Top Bar (No editing buttons) */}
-      <TopBar recipientName={config.recipientName} />
-
-      {/* Delicate Venetian Wax Progress Hairline */}
-      <div
-        aria-label="Peace restoration progress"
-        className="relative z-20 w-full h-1 bg-[#DED5C5]"
-      >
-        <div
-          className="h-full bg-[#9B3F33] transition-transform duration-300 origin-left"
-          style={{ transform: `scaleX(${progress.percentage / 100})` }}
+    <div className="relative min-h-screen flex flex-col justify-between">
+      <div>
+        {/* Multi-Screen Top Navigation Bar */}
+        <TopBar
+          recipientName={config.recipientName}
+          currentStep={currentStep}
+          isMuted={isMuted}
+          onSelectStep={goToStep}
+          onToggleMusic={handleToggleMusic}
         />
-      </div>
 
-      <main className="relative z-10 max-w-6xl w-full mx-auto px-5 sm:px-8 lg:px-12">
-        {/* Fine Press Archival Metadata & Ambient Chime Strip */}
-        <div className="py-4 border-b border-[#DED5C5] flex flex-wrap items-center justify-between gap-4 font-mono-meta text-[11px] uppercase tracking-[0.15em] text-[#5C5249]">
-          <div className="flex flex-wrap items-center gap-3 tabular-nums">
-            <span>{config.catalogNumber}</span>
-            <span aria-hidden="true">·</span>
-            <span>{config.dateLabel}</span>
-            <span aria-hidden="true">·</span>
-            <span className="text-[#9B3F33] font-medium">
-              {progress.stageLabel} ({progress.percentage}%)
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={handleToggleMusic}
-              aria-label={
-                isMuted
-                  ? 'Turn on gentle acoustic chime'
-                  : 'Mute gentle acoustic chime'
-              }
-              className="min-h-[34px] px-3.5 py-1 bg-[#FCF9F4] border border-[#C5B9A5] font-mono-meta text-[11px] uppercase tracking-[0.14em] text-[#1E1916] hover:border-[#9B3F33] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-            >
-              {isMuted ? 'Ambient Chime: Muted' : 'Ambient Chime: Active ♪'}
-            </button>
-          </div>
+        {/* Progress Bar */}
+        <div
+          aria-label="Storybook page progress"
+          className="relative z-20 w-full h-1 bg-[#DED5C5]"
+        >
+          <div
+            className="h-full bg-[#9B3F33] transition-transform duration-300 origin-left"
+            style={{ transform: `scaleX(${progress.percentage / 100})` }}
+          />
         </div>
 
-        {/* SECTION I: THE FINE PRESS MANUSCRIPT & APOLOGY HERO */}
-        <section
-          id="the-silence"
-          className="py-12 lg:py-16 border-b border-[#DED5C5]"
-          aria-labelledby="epistle-hero-heading"
-        >
-          {/* Editorial Folio Masthead */}
-          <div className="max-w-3xl mb-12">
-            <p className="font-mono-meta text-[11px] uppercase tracking-[0.2em] text-[#445946] mb-3">
-              Section I · A Personal Epistle for {config.recipientName}
-            </p>
-            <h1
-              id="epistle-hero-heading"
-              className="font-display text-4xl sm:text-5xl lg:text-[62px] font-semibold text-[#1E1916] tracking-tight leading-[1.06] mb-5"
-              style={{ textWrap: 'balance' }}
+        <main className="relative z-10 max-w-5xl w-full mx-auto px-4 sm:px-8 lg:px-10 py-6 sm:py-8">
+          {/* SCREEN 1: THE SEALED ENVELOPE COVER */}
+          {currentStep === 1 && (
+            <section
+              aria-labelledby="cover-heading"
+              className="py-4 sm:py-8 flex flex-col items-center justify-center"
             >
-              {config.headline}
-            </h1>
-            <p className="font-serif-body italic text-xl lg:text-2xl text-[#5C5249] leading-relaxed">
-              {config.subheadline}
-            </p>
-          </div>
+              <div className="paper-sheet double-rule-frame w-full max-w-3xl p-8 sm:p-12 text-center flex flex-col items-center">
+                <p className="font-mono-meta text-[11px] uppercase tracking-[0.2em] text-[#445946] mb-3">
+                  {config.subtitleTag}
+                </p>
 
-          {/* 2-Column Asymmetric Editorial Split: Letter Sheet (Left 7 cols) + Herbarium Plate & Truth Ledger (Right 5 cols) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
-            {/* Left 7 Columns: The Letterpress Manuscript */}
-            <article className="paper-sheet double-rule-frame lg:col-span-7 flex flex-col justify-between p-7 sm:p-10 lg:p-12">
-              <div>
-                <div className="flex items-center justify-between gap-4 pb-6 mb-7 border-b border-[#DED5C5]">
+                {/* Properly Composed Horizontal Botanical Garland (Sunflower, Watermelon & White Lily) */}
+                <BotanicalBouquetCrestSvg className="w-full max-w-[330px] h-auto my-2" />
+
+                <h1
+                  id="cover-heading"
+                  className="font-display text-4xl sm:text-5xl lg:text-[54px] font-semibold text-[#1E1916] tracking-tight leading-[1.08] mt-3 mb-4"
+                  style={{ textWrap: 'balance' }}
+                >
+                  {config.headline}
+                </h1>
+
+                <p className="font-serif-body italic text-xl sm:text-2xl text-[#5C5249] max-w-2xl leading-relaxed mb-8">
+                  {config.subheadline}
+                </p>
+
+                {/* Quick 3-Item Truth Summary Box */}
+                <div className="w-full max-w-xl p-5 paper-inset grid grid-cols-1 sm:grid-cols-3 gap-4 text-center mb-8">
                   <div>
-                    <p className="font-mono-meta text-[11px] uppercase tracking-[0.18em] text-[#8A7E72]">
-                      Verbatim Dispatch · Kept for {config.recipientName}
+                    <div className="font-mono-meta text-[10px] uppercase tracking-[0.15em] text-[#8A7E72]">
+                      The Joke Itself
+                    </div>
+                    <div className="font-display text-xl font-semibold text-[#1E1916] mt-1">
+                      Harmless & Warm
+                    </div>
+                  </div>
+                  <div className="sm:border-x border-[#DED5C5] px-2">
+                    <div className="font-mono-meta text-[10px] uppercase tracking-[0.15em] text-[#8A7E72]">
+                      Leaving Mid-Laugh
+                    </div>
+                    <div className="font-display text-xl font-semibold text-[#9B3F33] mt-1">
+                      Never My Choice
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-mono-meta text-[10px] uppercase tracking-[0.15em] text-[#8A7E72]">
+                      Peace Basket Ready
+                    </div>
+                    <div className="font-display text-xl font-semibold text-[#445946] mt-1">
+                      Watermelon & Flowers
+                    </div>
+                  </div>
+                </div>
+
+                {/* Interactive Wax Seal Button to Open Page 2 */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundEngine.playHeartShimmer();
+                    goToStep(2);
+                  }}
+                  className="group flex flex-col items-center gap-3 cursor-pointer"
+                >
+                  <div className="transition-transform duration-200 group-hover:scale-105">
+                    <WaxSealSvg className="w-20 h-20" />
+                  </div>
+                  <span className="min-h-[44px] inline-flex items-center px-7 py-3 bg-[#9B3F33] text-[#FCF9F4] font-sans-ui text-xs uppercase tracking-[0.16em] font-medium group-hover:bg-[#843126] transition-colors">
+                    Open the Letter (Page 2 of 5) →
+                  </span>
+                </button>
+              </div>
+            </section>
+          )}
+
+          {/* SCREEN 2: THE DEDICATED LETTER PAGE */}
+          {currentStep === 2 && (
+            <section
+              aria-labelledby="letter-heading"
+              className="py-4 sm:py-6 flex flex-col items-center"
+            >
+              <article className="paper-sheet double-rule-frame w-full max-w-3xl p-7 sm:p-12">
+                {/* Letter Header with Properly Placed Botanical Icons */}
+                <div className="flex flex-wrap items-center justify-between gap-4 pb-6 mb-7 border-b border-[#DED5C5]">
+                  <div>
+                    <p className="font-mono-meta text-[11px] uppercase tracking-[0.18em] text-[#445946]">
+                      Page 2 of 5 · Personal Letter
                     </p>
-                    <h2 className="mt-1.5 font-display italic text-3xl sm:text-4xl font-semibold text-[#1E1916]">
-                      {renderPoeticText(config.greetingLine)}
-                    </h2>
+                    <h1
+                      id="letter-heading"
+                      className="mt-1 font-display italic text-3xl sm:text-4xl font-semibold text-[#1E1916]"
+                    >
+                      {config.greetingLine}
+                    </h1>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      soundEngine.playHeartShimmer();
-                      setSealBroken((b) => !b);
-                    }}
-                    aria-label="Venetian wax seal monogram R"
-                    className="shrink-0 transition-transform hover:scale-105 cursor-pointer"
-                  >
-                    <WaxSealSvg broken={sealBroken} className="w-20 h-20" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <SunflowerSvg className="w-11 h-11" spinSlow />
+                    <WatermelonSvg className="w-11 h-11" />
+                    <LilySvg className="w-11 h-11" />
+                  </div>
                 </div>
 
-                {/* Editorial Serif Prose Paragraphs */}
-                <div className="space-y-6 font-serif-body text-[19px] sm:text-[20px] leading-[1.82] text-[#1E1916]">
-                  <p className="whitespace-pre-line first-letter:font-display first-letter:text-5xl first-letter:font-semibold first-letter:float-left first-letter:mr-3 first-letter:leading-none first-letter:text-[#9B3F33]">
-                    {renderPoeticText(config.jokeReflection)}
+                {/* Simple, Poetic 3-Paragraph Letter */}
+                <div className="space-y-6 font-serif-body text-[19px] sm:text-[21px] leading-[1.82] text-[#1E1916]">
+                  <p className="first-letter:font-display first-letter:text-5xl first-letter:font-semibold first-letter:float-left first-letter:mr-3 first-letter:leading-none first-letter:text-[#9B3F33]">
+                    {config.jokeReflection}
                   </p>
 
-                  <p className="whitespace-pre-line">
-                    {renderPoeticText(config.philosophicalTruth)}
-                  </p>
+                  <p>{config.philosophicalTruth}</p>
 
-                  <p className="whitespace-pre-line">
-                    {renderPoeticText(config.listeningPledge)}
-                  </p>
-                </div>
-              </div>
-
-              <div className="pt-7 mt-9 border-t border-[#DED5C5] flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <p className="font-hand text-xl text-[#5C5249]">
-                    Set in type with patience, zero excuses & quiet care
-                  </p>
-                  <p className="font-display text-2xl italic font-semibold text-[#1E1916] mt-0.5">
-                    {renderPoeticText(config.senderName)}
-                  </p>
+                  <p>{config.listeningPledge}</p>
                 </div>
 
-                <a
-                  href="#peace-offerings"
-                  className="min-h-[42px] inline-flex items-center px-5 py-2.5 bg-[#9B3F33] text-[#FCF9F4] font-sans-ui text-xs uppercase tracking-[0.14em] font-medium hover:bg-[#843126] transition-colors whitespace-nowrap shrink-0"
-                >
-                  Choose Peace Offerings →
-                </a>
-              </div>
-            </article>
-
-            {/* Right 5 Columns: Herbarium Botanical Specimen, Epigraph & Ledger of Facts */}
-            <aside className="paper-sheet lg:col-span-5 flex flex-col justify-between p-7 sm:p-9">
-              <div>
-                <div className="flex items-center justify-between font-mono-meta text-[11px] uppercase tracking-[0.16em] text-[#8A7E72] pb-3 mb-5 border-b border-[#DED5C5]">
-                  <span>Botanical Frontispiece</span>
-                  <span>Plate No. 01</span>
-                </div>
-
-                <div className="py-3 flex flex-col items-center justify-center mb-5">
-                  <PressedBotanicalPlateSvg
-                    className="w-full max-w-[240px] h-auto"
-                    activeFlower={chosenFlower}
-                  />
-                </div>
-
-                {/* Philosophical Epigraph */}
-                <blockquote className="py-5 border-y border-[#DED5C5] my-4">
-                  <p className="font-display text-2xl italic font-medium text-[#1E1916] leading-snug mb-2">
+                {/* Epigraph Quote & Signature */}
+                <blockquote className="my-8 p-5 paper-inset border-l-2 border-l-[#9B3F33]">
+                  <p className="font-display text-2xl italic font-medium text-[#1E1916] leading-snug">
                     {config.epigraphQuote}
                   </p>
-                  <footer className="font-mono-meta text-[11px] uppercase tracking-[0.14em] text-[#8A7E72]">
-                    — {config.epigraphAuthor}
-                  </footer>
                 </blockquote>
-              </div>
 
-              {/* Concise Ledger of the Moment */}
-              <div className="pt-5 border-t border-[#DED5C5] space-y-3">
-                <div className="font-mono-meta text-[11px] uppercase tracking-[0.16em] text-[#445946]">
-                  The Record of the Moment
+                <div className="pt-6 border-t border-[#DED5C5] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <p className="font-hand text-2xl text-[#9B3F33]">
+                      Written with zero excuses & cold watermelon waiting for you
+                    </p>
+                    <p className="font-display text-2xl italic font-semibold text-[#1E1916] mt-0.5">
+                      {config.senderName}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => goToStep(1)}
+                      className="min-h-[42px] px-4 py-2 bg-[#FCF9F4] border border-[#C5B9A5] font-sans-ui text-xs uppercase tracking-[0.12em] font-medium text-[#1E1916] hover:border-[#1E1916] transition-colors cursor-pointer"
+                    >
+                      ← Cover
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => goToStep(3)}
+                      className="min-h-[42px] px-5 py-2.5 bg-[#9B3F33] text-[#FCF9F4] font-sans-ui text-xs uppercase tracking-[0.14em] font-medium hover:bg-[#843126] transition-colors cursor-pointer"
+                    >
+                      Next: Three Truths (3/5) →
+                    </button>
+                  </div>
                 </div>
-                <dl className="space-y-2.5 font-serif-body text-[17px] text-[#1E1916]">
-                  <div className="flex justify-between gap-4 py-1.5 border-b border-[#DED5C5]">
-                    <dt className="text-[#5C5249]">The Joke Itself:</dt>
-                    <dd className="font-medium text-[#1E1916] text-right">
-                      Harmless & warm
-                    </dd>
-                  </div>
-                  <div className="flex justify-between gap-4 py-1.5 border-b border-[#DED5C5]">
-                    <dt className="text-[#5C5249]">What Broke the Peace:</dt>
-                    <dd className="font-medium text-[#1E1916] text-right">
-                      Vanishing right in the middle of it
-                    </dd>
-                  </div>
-                  <div className="flex justify-between gap-4 py-1.5 border-b border-[#DED5C5]">
-                    <dt className="text-[#5C5249]">Was Leaving a Choice?</dt>
-                    <dd className="font-semibold text-[#9B3F33] text-right">
-                      Never—purely circumstance
-                    </dd>
-                  </div>
-                  <div className="flex justify-between gap-4 py-1">
-                    <dt className="text-[#5C5249]">Peace Inventory Ready:</dt>
-                    <dd className="font-medium text-[#445946] text-right">
-                      Sunflowers, Lilies & Milk Cacao
-                    </dd>
-                  </div>
-                </dl>
-              </div>
-            </aside>
-          </div>
-        </section>
+              </article>
+            </section>
+          )}
 
-        {/* SECTION II: THREE PHILOSOPHICAL NOTES ON LEAVING MID-JOKE */}
-        <PerspectiveLedger items={PERSPECTIVE_ITEMS} />
+          {/* SCREEN 3: THREE SIMPLE TRUTHS */}
+          {currentStep === 3 && (
+            <PerspectiveLedger
+              items={PERSPECTIVE_ITEMS}
+              onPrev={() => goToStep(2)}
+              onNext={() => goToStep(4)}
+            />
+          )}
 
-        {/* SECTION III: THE REPARATIONS LEDGER */}
-        <PeaceOfferingsSection
-          recipientName={config.recipientName}
-          offerings={offerings}
-          selectedIds={selectedOfferingIds}
-          onToggleOffering={handleToggleOffering}
-          onAddCustomOffering={handleAddCustomOffering}
-        />
+          {/* SCREEN 4: THE PEACE BASKET (WATERMELON, MILK CHOCOLATE, FLOWERS, COOKING) */}
+          {currentStep === 4 && (
+            <PeaceOfferingsSection
+              recipientName={config.recipientName}
+              offerings={offerings}
+              selectedIds={selectedOfferingIds}
+              onToggleOffering={handleToggleOffering}
+              onAddCustomOffering={handleAddCustomOffering}
+              onPrev={() => goToStep(3)}
+              onNext={() => goToStep(5)}
+            />
+          )}
 
-        {/* SECTION IV: THE OLIVE BRANCH & SOVEREIGN VERDICT */}
-        <TruceSealSection
-          config={config}
-          selectedOfferings={selectedOfferingsList}
-          customOfferingTitles={customOfferingTitles}
-          verdict={verdict}
-          truceSealed={truceSealed}
-          personalNote={personalNote}
-          chosenFlower={chosenFlower}
-          dispatchStatus={dispatchStatus}
-          onSelectVerdict={(v) => setVerdict(v)}
-          onChangeChosenFlower={(f) => setChosenFlower(f)}
-          onChangePersonalNote={(note) => setPersonalNote(note)}
-          onSealTruce={handleSealTruce}
-          onResetTruce={handleResetTruce}
-        />
-      </main>
+          {/* SCREEN 5: FINAL VERDICT & WAX SEAL */}
+          {currentStep === 5 && (
+            <TruceSealSection
+              config={config}
+              selectedOfferings={selectedOfferingsList}
+              customOfferingTitles={customOfferingTitles}
+              verdict={verdict}
+              truceSealed={truceSealed}
+              personalNote={personalNote}
+              chosenFlower={chosenFlower}
+              dispatchStatus={dispatchStatus}
+              onSelectVerdict={(v) => setVerdict(v)}
+              onChangeChosenFlower={(f) => setChosenFlower(f)}
+              onChangePersonalNote={(note) => setPersonalNote(note)}
+              onSealTruce={handleSealTruce}
+              onResetTruce={handleResetTruce}
+              onPrev={() => goToStep(4)}
+            />
+          )}
+        </main>
+      </div>
 
-      {/* Quiet Colophon Footer (No editing buttons) */}
-      <footer className="relative z-10 mt-12 border-t border-[#DED5C5] py-8 px-6 lg:px-12 bg-[#FCF9F4]">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 font-mono-meta text-[11px] uppercase tracking-[0.15em] text-[#5C5249]">
+      {/* Quiet Footer with Page Indicator & Live Dispatch Log for Varchasva */}
+      <footer className="relative z-10 mt-6 border-t border-[#DED5C5] py-5 px-6 lg:px-12 bg-[#FCF9F4]">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 font-mono-meta text-[11px] uppercase tracking-[0.15em] text-[#5C5249]">
           <div className="flex flex-wrap items-center gap-2">
-            <span>Colophon · Kept for {config.recipientName}</span>
+            <span>Kept for {config.recipientName} (Mommy Biceps)</span>
             <span aria-hidden="true">·</span>
-            <span>Fine Press Peace Edition</span>
+            <span className="text-[#9B3F33] font-medium">{progress.stageLabel}</span>
           </div>
 
           <div className="flex items-center gap-4">
@@ -572,13 +568,6 @@ export function App() {
             >
               Dispatch Log
             </button>
-            <span aria-hidden="true">·</span>
-            <a
-              href="#epistle-top"
-              className="hover:text-[#9B3F33] underline underline-offset-4"
-            >
-              Return to Top ↑
-            </a>
           </div>
         </div>
       </footer>
@@ -636,8 +625,9 @@ export function App() {
                   </p>
                   <p className="font-serif-body text-base text-[#5C5249]">
                     As soon as Rishika clicks “Stamp Wax Seal & Send to Varchasva” (or
-                    “Forgive & Send Verdict”), her exact flower choice, claimed peace
-                    offerings, and note will appear right here automatically.
+                    “Forgive & Send Verdict”), her exact flower/watermelon choice,
+                    claimed peace basket items, and note will appear right here
+                    automatically.
                   </p>
                 </div>
               ) : (
