@@ -565,24 +565,24 @@ export function App() {
           aria-labelledby="dispatch-log-title"
         >
           <div className="paper-sheet w-full max-w-2xl max-h-[82vh] flex flex-col p-6 sm:p-8">
-            <div className="flex items-center justify-between gap-4 pb-4 mb-5 border-b border-[#DED5C5]">
-              <div>
-                <p className="font-mono-meta text-[11px] uppercase tracking-[0.16em] text-[#445946]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-[#DED5C5]">
+              <div className="min-w-0">
+                <p className="font-mono-meta text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-[#445946] break-all">
                   Live Cloud Feed · Topic: {KEEPSAKE_META.ntfyTopic}
                 </p>
                 <h2
                   id="dispatch-log-title"
-                  className="font-display text-2xl sm:text-3xl font-semibold text-[#1E1916]"
+                  className="font-display text-2xl sm:text-3xl font-semibold text-[#1E1916] mt-0.5"
                 >
                   Rishika’s Sealed Verdict Dispatches
                 </h2>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-end gap-2 shrink-0">
                 <button
                   type="button"
                   onClick={handleClearAllDispatchesAndReset}
                   disabled={inboxLoading}
-                  className="px-3 py-1.5 border border-[#C5B9A5] bg-[#F6F2EA] font-mono-meta text-[10px] uppercase tracking-[0.14em] text-[#9B3F33] hover:border-[#9B3F33] cursor-pointer disabled:opacity-50"
+                  className="px-3 py-1.5 border border-[#C5B9A5] bg-[#F6F2EA] font-mono-meta text-[10px] uppercase tracking-[0.14em] text-[#9B3F33] hover:border-[#9B3F33] cursor-pointer disabled:opacity-50 whitespace-nowrap"
                 >
                   Reset & Clear Log
                 </button>
