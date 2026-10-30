@@ -19,9 +19,9 @@ import {
   LilySvg,
   SunflowerSvg,
   WatermelonSvg,
-  WaxSealSvg,
 } from './components/BotanicalArt';
 import { TopBar } from './components/TopBar';
+import { InteractiveEnvelope } from './components/InteractiveEnvelope';
 import { PerspectiveLedger } from './components/PerspectiveLedger';
 import { PeaceOfferingsSection } from './components/PeaceOfferingsSection';
 import { TruceSealSection } from './components/TruceSealSection';
@@ -335,127 +335,63 @@ export function App() {
   return (
     <div className="relative min-h-screen flex flex-col justify-between">
       <div>
-        {/* Multi-Screen Top Navigation Bar */}
-        <TopBar
-          recipientName={config.recipientName}
-          currentStep={currentStep}
-          isMuted={isMuted}
-          onSelectStep={goToStep}
-          onToggleMusic={handleToggleMusic}
-        />
+        {/* Multi-Screen Top Navigation Bar (Revealed once the envelope has been opened) */}
+        {currentStep > 1 && (
+          <>
+            <TopBar
+              recipientName={config.recipientName}
+              currentStep={currentStep}
+              isMuted={isMuted}
+              onSelectStep={goToStep}
+              onToggleMusic={handleToggleMusic}
+            />
 
-        {/* Progress Bar */}
-        <div
-          aria-label="Storybook page progress"
-          className="relative z-20 w-full h-1 bg-[#DED5C5]"
-        >
-          <div
-            className="h-full bg-[#9B3F33] transition-transform duration-300 origin-left"
-            style={{ transform: `scaleX(${progress.percentage / 100})` }}
-          />
-        </div>
+            {/* Progress Bar */}
+            <div
+              aria-label="Storybook page progress"
+              className="relative z-20 w-full h-1 bg-[#DED5C5]"
+            >
+              <div
+                className="h-full bg-[#9B3F33] transition-transform duration-300 origin-left"
+                style={{ transform: `scaleX(${progress.percentage / 100})` }}
+              />
+            </div>
+          </>
+        )}
 
         <main className="relative z-10 max-w-5xl w-full mx-auto px-4 sm:px-8 lg:px-10 py-6 sm:py-8">
-          {/* SCREEN 1: THE SEALED ENVELOPE COVER */}
+          {/* SCREEN 1: THE INTERACTIVE 3D ENVELOPE (OPENS & DISAPPEARS ON CLICK) */}
           {currentStep === 1 && (
-            <section
-              aria-labelledby="cover-heading"
-              className="py-4 sm:py-8 flex flex-col items-center justify-center"
-            >
-              <div className="paper-sheet double-rule-frame w-full max-w-3xl p-8 sm:p-12 text-center flex flex-col items-center">
-                <p className="font-mono-meta text-[11px] uppercase tracking-[0.2em] text-[#445946] mb-3">
-                  {config.subtitleTag}
-                </p>
-
-                {/* Properly Composed Horizontal Botanical Garland (Sunflower, Watermelon & White Lily) */}
-                <BotanicalBouquetCrestSvg className="w-full max-w-[330px] h-auto my-2" />
-
-                <h1
-                  id="cover-heading"
-                  className="font-display text-4xl sm:text-5xl lg:text-[54px] font-semibold text-[#1E1916] tracking-tight leading-[1.08] mt-3 mb-4"
-                  style={{ textWrap: 'balance' }}
-                >
-                  {config.headline}
-                </h1>
-
-                <p className="font-serif-body italic text-xl sm:text-2xl text-[#5C5249] max-w-2xl leading-relaxed mb-8">
-                  {config.subheadline}
-                </p>
-
-                {/* Quick 3-Item Truth Summary Box */}
-                <div className="w-full max-w-xl p-5 paper-inset grid grid-cols-1 sm:grid-cols-3 gap-4 text-center mb-8">
-                  <div>
-                    <div className="font-mono-meta text-[10px] uppercase tracking-[0.15em] text-[#8A7E72]">
-                      The Joke Itself
-                    </div>
-                    <div className="font-display text-xl font-semibold text-[#1E1916] mt-1">
-                      Harmless & Warm
-                    </div>
-                  </div>
-                  <div className="sm:border-x border-[#DED5C5] px-2">
-                    <div className="font-mono-meta text-[10px] uppercase tracking-[0.15em] text-[#8A7E72]">
-                      Leaving Mid-Laugh
-                    </div>
-                    <div className="font-display text-xl font-semibold text-[#9B3F33] mt-1">
-                      Never My Choice
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-mono-meta text-[10px] uppercase tracking-[0.15em] text-[#8A7E72]">
-                      Peace Basket Ready
-                    </div>
-                    <div className="font-display text-xl font-semibold text-[#445946] mt-1">
-                      Watermelon & Flowers
-                    </div>
-                  </div>
-                </div>
-
-                {/* Interactive Wax Seal Button to Open Page 2 */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    soundEngine.playHeartShimmer();
-                    goToStep(2);
-                  }}
-                  className="group flex flex-col items-center gap-3 cursor-pointer"
-                >
-                  <div className="transition-transform duration-200 group-hover:scale-105">
-                    <WaxSealSvg className="w-20 h-20" />
-                  </div>
-                  <span className="min-h-[44px] inline-flex items-center px-7 py-3 bg-[#9B3F33] text-[#FCF9F4] font-sans-ui text-xs uppercase tracking-[0.16em] font-medium group-hover:bg-[#843126] transition-colors">
-                    Open the Letter (Page 2 of 5) →
-                  </span>
-                </button>
-              </div>
-            </section>
+            <InteractiveEnvelope
+              recipientName={config.recipientName}
+              nickname={config.nickname}
+              senderName={config.senderName}
+              onFinishOpen={() => setCurrentStep(2)}
+            />
           )}
 
-          {/* SCREEN 2: THE DEDICATED LETTER PAGE */}
+          {/* SCREEN 2: THE DEDICATED LETTER PAGE (REVEALED AFTER ENVELOPE OPENS) */}
           {currentStep === 2 && (
             <section
               aria-labelledby="letter-heading"
-              className="py-4 sm:py-6 flex flex-col items-center"
+              className="py-4 sm:py-6 flex flex-col items-center animate-in fade-in duration-500"
             >
               <article className="paper-sheet double-rule-frame w-full max-w-3xl p-7 sm:p-12">
-                {/* Letter Header with Properly Placed Botanical Icons */}
-                <div className="flex flex-wrap items-center justify-between gap-4 pb-6 mb-7 border-b border-[#DED5C5]">
-                  <div>
-                    <p className="font-mono-meta text-[11px] uppercase tracking-[0.18em] text-[#445946]">
-                      Page 2 of 5 · Personal Letter
-                    </p>
-                    <h1
-                      id="letter-heading"
-                      className="mt-1 font-display italic text-3xl sm:text-4xl font-semibold text-[#1E1916]"
-                    >
-                      {config.greetingLine}
-                    </h1>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <SunflowerSvg className="w-11 h-11" spinSlow />
-                    <WatermelonSvg className="w-11 h-11" />
-                    <LilySvg className="w-11 h-11" />
-                  </div>
+                {/* Symmetrical Botanical Garland Crest */}
+                <div className="flex flex-col items-center text-center pb-6 mb-7 border-b border-[#DED5C5]">
+                  <p className="font-mono-meta text-[11px] uppercase tracking-[0.18em] text-[#445946]">
+                    {config.subtitleTag}
+                  </p>
+                  <BotanicalBouquetCrestSvg className="w-full max-w-[310px] h-auto my-2" />
+                  <h1
+                    id="letter-heading"
+                    className="mt-1 font-display italic text-3xl sm:text-4xl font-semibold text-[#1E1916]"
+                  >
+                    {config.greetingLine}
+                  </h1>
+                  <p className="font-serif-body italic text-base sm:text-lg text-[#5C5249] mt-1.5 max-w-xl">
+                    {config.subheadline}
+                  </p>
                 </div>
 
                 {/* Simple, Poetic 3-Paragraph Letter */}
@@ -477,13 +413,20 @@ export function App() {
                 </blockquote>
 
                 <div className="pt-6 border-t border-[#DED5C5] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    <p className="font-hand text-2xl text-[#9B3F33]">
-                      Written with zero excuses & cold watermelon waiting for you
-                    </p>
-                    <p className="font-display text-2xl italic font-semibold text-[#1E1916] mt-0.5">
-                      {config.senderName}
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <div className="hidden sm:flex items-center gap-1.5">
+                      <SunflowerSvg className="w-9 h-9" spinSlow />
+                      <WatermelonSvg className="w-9 h-9" />
+                      <LilySvg className="w-9 h-9" />
+                    </div>
+                    <div>
+                      <p className="font-hand text-2xl text-[#9B3F33]">
+                        Written with zero excuses & cold watermelon waiting for you
+                      </p>
+                      <p className="font-display text-2xl italic font-semibold text-[#1E1916] mt-0.5">
+                        {config.senderName}
+                      </p>
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-3">
@@ -492,7 +435,7 @@ export function App() {
                       onClick={() => goToStep(1)}
                       className="min-h-[42px] px-4 py-2 bg-[#FCF9F4] border border-[#C5B9A5] font-sans-ui text-xs uppercase tracking-[0.12em] font-medium text-[#1E1916] hover:border-[#1E1916] transition-colors cursor-pointer"
                     >
-                      ← Cover
+                      ← Replay Envelope
                     </button>
                     <button
                       type="button"
