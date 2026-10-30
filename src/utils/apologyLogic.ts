@@ -44,7 +44,7 @@ export const KEEPSAKE_META = {
   herName: 'Rishika',
   nickname: 'Mommy Biceps',
   chatUrl: 'https://ig.me/m/trytofindvxrchsva__',
-  ntfyTopic: 'varchasva_rishika_truce_77',
+  ntfyTopic: 'varchasva_rishika_truce_fresh_01',
 };
 
 export const DEFAULT_APOLOGY_CONFIG: ApologyConfig = {

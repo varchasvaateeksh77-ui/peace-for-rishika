@@ -26,7 +26,8 @@ import { PerspectiveLedger } from './components/PerspectiveLedger';
 import { PeaceOfferingsSection } from './components/PeaceOfferingsSection';
 import { TruceSealSection } from './components/TruceSealSection';
 
-const STORAGE_KEY_STATE = 'rishika_multiscreen_peace_v5';
+const STORAGE_KEY_STATE = 'rishika_multiscreen_peace_v6';
+const RESET_MARKER = '__RESET_DISPATCH_LOG__';
 
 interface DispatchLogEntry {
   id: string;
@@ -62,6 +63,9 @@ export function App() {
   // Restore interactive state from URL parameters (if shared link) or localStorage
   useEffect(() => {
     try {
+      // Remove legacy storage key so previous test runs are cleanly reset
+      localStorage.removeItem('rishika_multiscreen_peace_v5');
+
       const params = new URLSearchParams(window.location.search);
       if (params.get('inbox') === '1' || params.get('varchasva') === '1') {
         setIsInboxOpen(true);
@@ -196,16 +200,20 @@ export function App() {
         .split('\n')
         .map((l) => l.trim())
         .filter(Boolean);
-      const parsedEntries: DispatchLogEntry[] = [];
+      let parsedEntries: DispatchLogEntry[] = [];
       for (const line of lines) {
         try {
           const item = JSON.parse(line);
-          if (item.event === 'message' && item.message) {
-            parsedEntries.push({
-              id: item.id,
-              time: item.time * 1000,
-              message: item.message,
-            });
+          if (item.event === 'message' && typeof item.message === 'string') {
+            if (item.message.trim() === RESET_MARKER) {
+              parsedEntries = [];
+            } else {
+              parsedEntries.push({
+                id: item.id,
+                time: item.time * 1000,
+                message: item.message,
+              });
+            }
           }
         } catch {
           // ignore malformed line
@@ -217,6 +225,39 @@ export function App() {
     } finally {
       setInboxLoading(false);
     }
+  };
+
+  const handleClearAllDispatchesAndReset = async () => {
+    setInboxLoading(true);
+    try {
+      await fetch(`https://ntfy.sh/${KEEPSAKE_META.ntfyTopic}`, {
+        method: 'POST',
+        body: RESET_MARKER,
+      });
+    } catch {
+      // ignore network error
+    }
+    try {
+      localStorage.removeItem(STORAGE_KEY_STATE);
+      localStorage.removeItem('rishika_multiscreen_peace_v5');
+      window.history.replaceState({}, '', window.location.pathname);
+    } catch {
+      // ignore
+    }
+    setInboxEntries([]);
+    setOfferings(DEFAULT_PEACE_OFFERINGS);
+    setSelectedOfferingIds([
+      'fresh-watermelon',
+      'milk-chocolate-inventory',
+      'sunflowers-and-lilies',
+    ]);
+    setVerdict(null);
+    setChosenFlower('watermelon-bouquet');
+    setTruceSealed(false);
+    setPersonalNote('');
+    setDispatchStatus('idle');
+    setCurrentStep(1);
+    setInboxLoading(false);
   };
 
   useEffect(() => {
@@ -537,6 +578,14 @@ export function App() {
                 </h2>
               </div>
               <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleClearAllDispatchesAndReset}
+                  disabled={inboxLoading}
+                  className="px-3 py-1.5 border border-[#C5B9A5] bg-[#F6F2EA] font-mono-meta text-[10px] uppercase tracking-[0.14em] text-[#9B3F33] hover:border-[#9B3F33] cursor-pointer disabled:opacity-50"
+                >
+                  Reset & Clear Log
+                </button>
                 <button
                   type="button"
                   onClick={fetchDispatchInbox}
