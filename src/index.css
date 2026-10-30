@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-canvas: #F6F2EA;
+    --bg-sheet: #FCF9F4;
+    --bg-elevated: #EFE9DC;
+    --bg-ink-card: #1F1B18;
+    --ink-primary: #1E1916;
+    --ink-secondary: #5C5249;
+    --ink-muted: #8A7E72;
+    --accent-wax: #9B3F33;
+    --accent-wax-soft: #F5E6E3;
+    --accent-sage: #445946;
+    --accent-sage-soft: #E7EFE8;
+    --accent-ochre: #C28B32;
+    --accent-ochre-soft: #F7EFE0;
+    --border-hairline: #DED5C5;
+    --border-strong: #C5B9A5;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--bg-canvas);
+    color: var(--ink-primary);
+    font-family: 'EB Garamond', Georgia, serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--bg-canvas);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(194, 139, 50, 0.06), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(155, 63, 51, 0.05), transparent 45%),
+      linear-gradient(to bottom, rgba(252, 249, 244, 0.4), rgba(246, 242, 234, 0.9));
+    color: var(--ink-primary);
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: rgba(155, 63, 51, 0.16);
+    color: var(--ink-primary);
+  }
+}
+
+.font-display {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-serif-body {
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+.font-hand {
+  font-family: 'Caveat', cursive;
+}
+
+.font-mono-meta {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.font-sans-ui {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Fine press paper sheet & editorial framing */
+.paper-sheet {
+  background-color: var(--bg-sheet);
+  border: 1px solid var(--border-hairline);
+  box-shadow:
+    0 1px 2px rgba(30, 25, 22, 0.03),
+    0 18px 42px -16px rgba(30, 25, 22, 0.07);
+}
+
+.paper-inset {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-hairline);
+}
+
+.double-rule-frame {
+  position: relative;
+}
+
+.double-rule-frame::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(197, 185, 165, 0.45);
+  pointer-events: none;
+}
+
+@keyframes waxStampPop {
+  0% {
+    transform: scale(1.22) rotate(-8deg);
+    opacity: 0.4;
+  }
+  65% {
+    transform: scale(0.95) rotate(2deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-wax-stamp {
+  animation: waxStampPop 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes gentlePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+.animate-gentle-pulse {
+  animation: gentlePulse 3.5s ease-in-out infinite;
+}
